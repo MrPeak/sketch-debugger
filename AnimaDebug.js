@@ -6,8 +6,16 @@
 // Call to break: animaBreakPoint(function (x) { return eval(x); });
 
 animaBreakPointOffset = 0;
+animaBreakPointEnabled = true;
+
+function disableAnimaBreakPoint() {
+	animaBreakPointEnabled = false;
+}
 
 function animaBreakPointSetup() {
+	if (!animaBreakPointEnabled) {
+		return;
+	}
 	var err = new Error();
 	var trace = err.stack.split("\n")[1];	
 	var traceComponents = trace.split(":");	
@@ -18,7 +26,10 @@ function animaBreakPointSetup() {
 	animaBreakPointOffset = row - rowInSource;
 }
 
-function animaBreakPoint(evalWithScope, optionalExpression, recurseCount) {		
+function animaBreakPoint(evalWithScope, optionalExpression, recurseCount) {
+	if (!animaBreakPointEnabled) {
+		return;
+	}
 	recurseCount  = recurseCount != undefined ? recurseCount : 1;
 	evalWithScope = evalWithScope != undefined ? evalWithScope : function (x) { return eval(x); };
 

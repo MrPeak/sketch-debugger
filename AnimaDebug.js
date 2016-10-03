@@ -41,7 +41,7 @@ function animaBreakPoint(evalWithScope, optionalExpression, recurseCount) {
 	var sourceFileName = traceFileComponents[traceFileComponents.length - 1];
 	var row = parseInt(traceComponents[1]) - animaBreakPointOffset;
 	var msg = animaGetCodeForTrace(trace);
-	var title = "Breakpoint:\n" + sourceFileName + " @ Row " + row;
+	var title = "Breakpoint:\n" + sourceFileName + " @ Line " + row;
 	
 	var stackTraceLabel = animaCreateCodeScrollingLabel(msg, NSMakeRect(0, 222, 600, 200), row);	
 

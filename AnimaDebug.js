@@ -1,9 +1,9 @@
-// Breakpoints for cocoascripts
+// Breakpoints for Sketch plugins
 // MIT License, Copyright 2016 Anima App.
 
 // Usage:
-// Call once: animaBreakPointSetup() 
-// Call to break: animaBreakPoint(this)
+// Call once: animaBreakPointSetup();
+// Call to break: animaBreakPoint(function (x) { return eval(x); });
 
 animaBreakPointOffset = 0;
 
@@ -11,17 +11,16 @@ function animaBreakPointSetup() {
 	var err = new Error();
 	var trace = err.stack.split("\n")[1];	
 	var traceComponents = trace.split(":");	
-	var line = parseInt(traceComponents[1]);
+	var row = parseInt(traceComponents[1]);
 	var file_code = animaGetCodeForTrace(trace);
 	var setupCallIndex = file_code.indexOf("animaBreakPointSetup()");
-	var lineInSource = file_code.substring(0,setupCallIndex).split("\n").length;
-	animaBreakPointOffset = line - lineInSource;
+	var rowInSource = file_code.substring(0,setupCallIndex).split("\n").length;
+	animaBreakPointOffset = row - rowInSource;
 }
 
-function animaBreakPoint(scope, optionalExpression, recurseCount) {		
-	if (recurseCount == undefined) {
-		recurseCount = 1;
-	}
+function animaBreakPoint(evalWithScope, optionalExpression, recurseCount) {		
+	recurseCount  = recurseCount != undefined ? recurseCount : 1;
+	evalWithScope = evalWithScope != undefined ? evalWithScope : function (x) { return eval(x); };
 
 	// Parse Stacktrace
 	var err = new Error();
@@ -29,27 +28,27 @@ function animaBreakPoint(scope, optionalExpression, recurseCount) {
 	var traceComponents = trace.split(":");
 	var traceFileComponents = traceComponents[0].split("/");
 	var sourceFileName = traceFileComponents[traceFileComponents.length - 1];
-	var line = parseInt(traceComponents[1]) - animaBreakPointOffset;
+	var row = parseInt(traceComponents[1]) - animaBreakPointOffset;
 	var msg = animaGetCodeForTrace(trace);
-	var title = "Breakpoint:\n" + sourceFileName + " @ Line " + line;
+	var title = "Breakpoint:\n" + sourceFileName + " @ Row " + row;
 	
-	var stackTraceLabel = animaCreateScrollingLabel(msg, NSMakeRect(0, 222, 500, 200), "Courier", 12);	
+	var stackTraceLabel = animaCreateCodeScrollingLabel(msg, NSMakeRect(0, 222, 600, 200), row);	
 
 	// Expression Input
 	var expressionValue = "";
 	if (optionalExpression != undefined) {
 		expressionValue = optionalExpression;
 	}
-	var expressionInput = animaCreateInput("Expression to evaluate, use 'scope' for vars (i.e scope.myVarName)", expressionValue, NSMakeRect(0, 0, 500, 20));
-	var expressionInputTitle = animaCreateLabel("Expresion to evaluate:", NSMakeRect(0, 22, 500, 20));
+	var expressionInput = animaCreateInput("Expression to evaluate (i.e myVarName)", expressionValue, NSMakeRect(0, 0, 600, 20));
+	var expressionInputTitle = animaCreateLabel("Expresion to evaluate:", NSMakeRect(0, 22, 600, 20));
 
 	// Evaluate
-	var evalText = animaBreakPointEvalText(optionalExpression, scope);	
-	var expressionOutput = animaCreateScrollingLabel(evalText, NSMakeRect(0, 55, 500, 135));
-	var expressionOutputTitle = animaCreateLabel(optionalExpression == undefined ? "Scope variables:" : "Expresion value:", NSMakeRect(0, 190, 500, 20));
+	var evalText = animaBreakPointEvalText(optionalExpression, evalWithScope);	
+	var expressionOutput = animaCreateScrollingLabel(evalText, NSMakeRect(0, 55, 600, 135));
+	var expressionOutputTitle = animaCreateLabel(optionalExpression == undefined ? "Scope variables:" : "Expresion value:", NSMakeRect(0, 190, 600, 20));
 
 	// Alert View
-	var view = [[NSView alloc] initWithFrame:NSMakeRect(0, 0, 500, 422)];	
+	var view = [[NSView alloc] initWithFrame:NSMakeRect(0, 0, 600, 422)];	
 	[view addSubview:expressionOutput];		
 	[view addSubview:expressionOutputTitle];
 	[view addSubview:stackTraceLabel];
@@ -66,7 +65,7 @@ function animaBreakPoint(scope, optionalExpression, recurseCount) {
 	// User Choice
 	var responseCode = [alert runModal];
 	if (responseCode == 1000) { // Evaluate
-		animaBreakPoint(scope, expressionInput.stringValue() + "", recurseCount + 1);
+		animaBreakPoint(evalWithScope, expressionInput.stringValue() + "", recurseCount + 1);
 	}
 	if (responseCode == 1002) { // Stop
 		err.message = "Stopped by user"
@@ -74,17 +73,18 @@ function animaBreakPoint(scope, optionalExpression, recurseCount) {
 	}
 }
 
-function animaBreakPointEvalText(optionalExpression, scope) {
+function animaBreakPointEvalText(optionalExpression, evalWithScope) {
 	var res = "";
 	if (optionalExpression != undefined) {		
 		try {
-			res = optionalExpression + "\n---\n" + eval(optionalExpression);
+			res = optionalExpression + "\n---\n" + evalWithScope(optionalExpression);
 		}
 		catch (e) {
 			res = "Error: " + e.message;
 		}		
 	}
 	else {
+		var scope = evalWithScope("this");
 		for (name in scope) {
     		res += name + " : " + (scope[name] + "").split("{\n")[0].split("\n")[0] + "\n";	
     	}
@@ -98,7 +98,7 @@ function animaGetCodeForTrace(stackTrace) {
 	var codeWithLineNumber = "";
 	var rows = code.split("\n");
 	for (row = 0; row < rows.length; row++) {
-		codeWithLineNumber += animaNumberPadding(row + 1, 3) + ": " + rows[row] + "\n";
+		codeWithLineNumber += animaNumberPadding(row + 1, 3) + "| " + rows[row] + "\n";
 	}
 	return codeWithLineNumber;
 }
@@ -109,8 +109,8 @@ function animaNumberPadding(num, size) {
     return s;
 }
 
-var animaCreateScrollingLabel = function(text, rect, optionalFont, optionalSize) {
-	scrollView = [[NSScrollView alloc] initWithFrame:rect];
+var animaCreateScrollingLabel = function(text, rect) {
+	var scrollView = [[NSScrollView alloc] initWithFrame:rect];
 
 	scrollView.hasVerticalScroller = true;
 	scrollView.hasHorizontalScroller = false;
@@ -126,11 +126,24 @@ var animaCreateScrollingLabel = function(text, rect, optionalFont, optionalSize)
 	textView.textContainer.widthTracksTextView = true;
 	textView.string = text;
 
-	if (optionalFont != undefined && optionalSize != undefined) {
-		textView.font = [NSFont fontWithName:optionalFont size:optionalSize];
-	}
-
 	scrollView.documentView = textView;
+	return scrollView;
+}
+
+var animaCreateCodeScrollingLabel = function(text, rect, breakpointRow) {
+	var scrollView = animaCreateScrollingLabel(text, NSMakeRect(0, 222, 600, 200));
+	[scrollView documentView].font = [NSFont fontWithName:"CourierNewPSMT" size:12];
+
+ 	var rowPrefix = "\n" + animaNumberPadding(breakpointRow , 3) + "|"
+ 	var nextRowPrefix = "\n" + animaNumberPadding(breakpointRow + 1 , 3) + "|"
+ 	var rowStartIndex = text.indexOf(rowPrefix);
+ 	var rowEndIndex = text.indexOf(nextRowPrefix);
+ 	rowEndIndex = rowEndIndex != -1 ? rowEndIndex : text.length;
+ 	var boldFont = [NSFont fontWithName:"CourierNewPS-BoldMT" size:12];
+
+ 	// Scroll to breakpoint and make it bold
+	[[scrollView documentView] setFont:boldFont range:NSMakeRange(rowStartIndex, rowEndIndex-rowStartIndex)];
+ 	[[scrollView documentView] scrollRangeToVisible:NSMakeRange(rowStartIndex, 1)];
 	return scrollView;
 }
 

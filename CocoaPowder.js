@@ -4,11 +4,12 @@
 // Usage:
 // Call once: cocoapowderSetup();
 // Call to break: cocoapowderBreakpoint(function (x) { return eval(x); });
+// Call to disable: disableCocoaPowder(function (x) { return eval(x); });
 
 animaBreakPointOffset = 0;
 animaBreakPointEnabled = true;
 
-function disableAnimaBreakPoint() {
+function disableCocoaPowder() {
 	animaBreakPointEnabled = false;
 }
 

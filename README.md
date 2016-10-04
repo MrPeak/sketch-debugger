@@ -1,4 +1,5 @@
 [![Slack Status](http://slack.animaapp.com/badge.svg)](http://slack.animaapp.com)
+[![apm](https://img.shields.io/apm/l/vim-mode.svg?maxAge=2592000)]()
 
 # SketchPluginDebugger
 Breakpoints for Sketch Plugins.

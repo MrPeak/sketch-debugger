@@ -2,8 +2,8 @@
 // MIT License, Copyright 2016 Anima App.
 
 // Usage:
-// Call once: animaBreakPointSetup();
-// Call to break: animaBreakPoint(function (x) { return eval(x); });
+// Call once: cocoapowderSetup();
+// Call to break: cocoapowderBreakpoint(function (x) { return eval(x); });
 
 animaBreakPointOffset = 0;
 animaBreakPointEnabled = true;
@@ -12,7 +12,7 @@ function disableAnimaBreakPoint() {
 	animaBreakPointEnabled = false;
 }
 
-function animaBreakPointSetup() {
+function cocoapowderSetup() {
 	if (!animaBreakPointEnabled) {
 		return;
 	}
@@ -21,12 +21,12 @@ function animaBreakPointSetup() {
 	var traceComponents = trace.split(":");	
 	var row = parseInt(traceComponents[1]);
 	var file_code = animaGetCodeForTrace(trace);
-	var setupCallIndex = file_code.indexOf("animaBreakPointSetup()");
+	var setupCallIndex = file_code.indexOf("cocoapowderSetup()");
 	var rowInSource = file_code.substring(0,setupCallIndex).split("\n").length;
 	animaBreakPointOffset = row - rowInSource;
 }
 
-function animaBreakPoint(evalWithScope, optionalExpression, recurseCount) {
+function cocoapowderBreakpoint(evalWithScope, optionalExpression, recurseCount) {
 	if (!animaBreakPointEnabled) {
 		return;
 	}
@@ -56,7 +56,7 @@ function animaBreakPoint(evalWithScope, optionalExpression, recurseCount) {
 	// Evaluate
 	var evalText = animaBreakPointEvalText(optionalExpression, evalWithScope);	
 	var expressionOutput = animaCreateScrollingLabel(evalText, NSMakeRect(0, 55, 600, 135));
-	var expressionOutputTitle = animaCreateLabel(optionalExpression == undefined ? "Scope variables:" : "Expresion value:", NSMakeRect(0, 190, 600, 20));
+	var expressionOutputTitle = animaCreateLabel(optionalExpression == undefined ? "Scope variables:" : "Expression value:", NSMakeRect(0, 190, 600, 20));
 
 	// Alert View
 	var view = [[NSView alloc] initWithFrame:NSMakeRect(0, 0, 600, 422)];	

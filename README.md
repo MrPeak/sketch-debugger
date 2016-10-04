@@ -1,3 +1,5 @@
+[![Slack Status](http://slack.animaapp.com/badge.svg)](http://slack.animaapp.com)
+
 # SketchPluginDebugger
 Breakpoints for Sketch Plugins.
 

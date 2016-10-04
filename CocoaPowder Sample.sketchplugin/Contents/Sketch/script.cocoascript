@@ -1,0 +1,21 @@
+@import 'MochaJSDelegate.js'
+@import 'CocoaPowder.js'
+
+// Setup
+cocoapowderSetup();
+// disableAnimaBreakPoint();
+
+function sampleFunction() {
+    var myVar = "Before breakpoint";
+
+    // This is how you add a breakpoint
+    cocoapowderBreakpoint(function (x) { return eval(x); });
+
+    myVar = "After breakpoint";
+    alert('Done!');
+}
+
+var onRun = function(context) {
+    sampleFunction();
+}
+

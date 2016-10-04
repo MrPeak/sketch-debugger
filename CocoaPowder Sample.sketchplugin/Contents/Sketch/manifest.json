@@ -1,0 +1,31 @@
+{
+  "author" : "Anima Team",
+  "commands" : [
+    {
+      "script" : "script.cocoascript",
+      "handler" : "onRun",
+      "shortcut" : "",
+      "name" : "👾 Breakpoint Sample",
+      "identifier" : "Breakpoint-Sample",
+      "isRoot" : true
+
+    },
+  ],
+  "menu" : {
+    "title" : "👾 Breakpoint Sample",
+    "isRoot" : true,
+    "items" : [
+      "Breakpoint-Sample",
+    ],
+  },
+  "identifier" : "com.animaapp.Breakpoint-Sample",
+  "description": "Breakpoint-Sample",
+  "authorEmail" : "support@animaapp.com",
+  "name" : "Breakpoint-Sample",
+  "homepage": "http://www.animaapp.com",
+  "version": "1.00",
+  "manifestURL": "",
+  "downloadURL": "",
+  "compatibleVersion": 1.01,
+  "bundleVersion": 1
+}

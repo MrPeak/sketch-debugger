@@ -12,23 +12,23 @@ Instead of following logs the busy console, breakpoints allows you follow your v
 
 ## Integration
 
-1. Drop [AnimaDebug.js](https://raw.githubusercontent.com/AnimaApp/SketchPluginDebugger/master/AnimaDebug.js) in your Plugin folder.
-2. ```@import 'AnimaDebug.js'``` into your `.cocoascript` files.
-3. Run ```animaBreakPointSetup();``` once in your script.
-4. Add breakpoints with this ```animaBreakPoint(function (x) { return eval(x); });```
+1. Drop [CocoaPowder.js](https://raw.githubusercontent.com/AnimaApp/CocoaPowder/master/CocoaPowder.js) in your Plugin folder.
+2. ```@import 'CocoaPowder.js'``` into your `.cocoascript` files.
+3. Run ```cocoapowderSetup();``` once in your script.
+4. Add breakpoints with this ```cocoapowderBreakpoint(function (x) { return eval(x); });```
 
 Example:  
 ```
-@import 'AnimaDebug.js'
+@import 'CocoaPowder.js'
 
 // Setup
-animaBreakPointSetup();
+cocoapowderSetup();
 
 function sampleFunction() {
     var myVar = "Before breakpoint";
 
     // This is how you add a breakpoint
-    animaBreakPoint(function (x) { return eval(x); });
+    cocoapowderBreakpoint(function (x) { return eval(x); });
 
     myVar = "After breakpoint";
     log('Done!');
@@ -40,7 +40,7 @@ var onRun = function(context) {
 ```
 
 ## Deployment
-Before deploying your code, make sure you remove breakpoints or call ```disableAnimaBreakPoint();```.
+Before deploying your code, make sure you remove breakpoints or call ```disableCocoaPowder();```.
 
 ## Contributing
 

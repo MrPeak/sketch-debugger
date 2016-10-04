@@ -17,6 +17,7 @@ Instead of following logs the busy console, breakpoints allows you follow your v
 3. Run ```animaBreakPointSetup();``` once in your script.
 4. Add breakpoints with this ```animaBreakPoint(function (x) { return eval(x); });```
 
+Example:  
 ```
 @import 'AnimaDebug.js'
 

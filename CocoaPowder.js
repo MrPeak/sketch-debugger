@@ -77,7 +77,7 @@ function cocoapowderBreakpoint(evalWithScope, optionalExpression, recurseCount) 
 	// User Choice
 	var responseCode = [alert runModal];
 	if (responseCode == 1000) { // Evaluate
-		animaBreakPoint(evalWithScope, expressionInput.stringValue() + "", recurseCount + 1);
+		cocoapowderBreakpoint(evalWithScope, expressionInput.stringValue() + "", recurseCount + 1);
 	}
 	if (responseCode == 1002) { // Stop
 		err.message = "Stopped by user"
